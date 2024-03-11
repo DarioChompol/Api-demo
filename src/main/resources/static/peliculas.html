@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API de Películas</title>
+</head>
+<body>
+    <h1>API-REST</h1>
+    
+    <h2>Lista de Películas</h2>
+    <button onclick="getAllPeliculas()">Obtener Todas las Películas</button>
+    <div id="peliculas"></div>
+
+    <h2>Buscar Película por Nombre y Sala</h2>
+    <input type="text" id="nombreInput" placeholder="Nombre de la Película">
+    <input type="number" id="salaIdInput" placeholder="ID de la Sala">
+    <button onclick="buscarPorNombreYSala()">Buscar</button>
+    <div id="peliculaBuscada"></div>
+
+    <script>
+        function getAllPeliculas() {
+            fetch('/peliculas')
+                .then(response => response.json())
+                .then(data => {
+                    const peliculasDiv = document.getElementById('peliculas');
+                    peliculasDiv.innerHTML = '';
+                    data.forEach(pelicula => {
+                        peliculasDiv.innerHTML += `<p>${pelicula.titulo}</p>`;
+                    });
+                });
+        }
+
+        function buscarPorNombreYSala() {
+            const nombre = document.getElementById('nombreInput').value;
+            const salaId = document.getElementById('salaIdInput').value;
+            fetch(`/peliculas/buscar?nombre=${nombre}&salaId=${salaId}`)
+                .then(response => response.json())
+                .then(data => {
+                    const peliculaBuscadaDiv = document.getElementById('peliculaBuscada');
+                    peliculaBuscadaDiv.innerHTML = '';
+                    if (data.id) {
+                        peliculaBuscadaDiv.innerHTML = `<p>Nombre: ${data.titulo}, Director: ${data.director}, Duración: ${data.duracion} minutos</p>`;
+                    } else {
+                        peliculaBuscadaDiv.innerHTML = '<p>No se encontró ninguna película</p>';
+                    }
+                });
+        }
+    </script>
+</body>
+</html>
